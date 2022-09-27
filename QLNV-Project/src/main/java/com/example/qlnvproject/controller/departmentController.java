@@ -26,29 +26,29 @@ public class departmentController extends BaseController{
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<departmentDto> insertDepartment(@RequestBody departmentDto dpmDTO){
+    public ResponseEntity<DepartmentUpdateDto> insertDepartment(@RequestBody departmentDto dpmDTO){
     //Convert entity to dto
     Department dpmRequest= modelMapper.map(dpmDTO, Department.class);
     Department dpm = departmentService.insertDepartment(dpmRequest);
     //Convert dto to entity
-    departmentDto dpmResponse = modelMapper.map(dpm, departmentDto.class);
-    return new ResponseEntity<departmentDto>(dpmResponse, HttpStatus.CREATED);
+    DepartmentUpdateDto dpmResponse = modelMapper.map(dpm, DepartmentUpdateDto.class);
+    return new ResponseEntity<DepartmentUpdateDto>(dpmResponse, HttpStatus.CREATED);
 
 
     }
 
     @GetMapping("/getById")
-    public ResponseEntity<departmentDto> getDepartmentById(@RequestParam("id") long id){
+    public ResponseEntity<DepartmentUpdateDto> getDepartmentById(@RequestParam("id") long id){
         Department department = departmentService.getDepartmentById(id);
-        departmentDto dpmResponse =modelMapper.map(department, departmentDto.class);
+        DepartmentUpdateDto dpmResponse =modelMapper.map(department, DepartmentUpdateDto.class);
         return ResponseEntity.ok().body(dpmResponse);
 
     }
 
     @GetMapping("/getAll")
-    public List<departmentDto> getAllDepartment(){
+    public List<DepartmentUpdateDto> getAllDepartment(){
         return departmentService.getAllDepartment().stream().map(department -> modelMapper.map(department,
-                departmentDto.class)).collect(Collectors.toList());
+                DepartmentUpdateDto.class)).collect(Collectors.toList());
     }
 
     @PostMapping("/update")
