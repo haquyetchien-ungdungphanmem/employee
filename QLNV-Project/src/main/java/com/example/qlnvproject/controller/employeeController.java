@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,15 +70,10 @@ public class employeeController extends BaseController{
     @PostMapping("/update")
     public ResponseEntity<ResponseEmployeeDto> updateEmployeeById(@RequestParam("id") long id, @RequestBody EmployeeUpdateDto empDTO){
         Employee employee = employeeService.getEmployeeById(id);
-        BeanUtils.copyProperties(empDTO, employee);
-        employee.setDepartment(employee.getDepartment());
-        employee.setPass(employee.getPass());
-        employee.setUsername(employee.getUsername());
-        employee.setRole(employee.getRole());
+        update(empDTO, employee);
         Employee emp = employeeService.save(employee);
         ResponseEmployeeDto empResponse = modelMapper.map(emp, ResponseEmployeeDto.class);
         return ResponseEntity.ok().body(empResponse);
-
     }
 
     @PostMapping("/delete")
@@ -92,5 +88,15 @@ public class employeeController extends BaseController{
     public ResponseEntity<?> deleteInDepartment(@RequestParam("id") long id){
         employeeService.deleteInDepartmnetById(id);
         return ResponseEntity.ok("Delete success!");
+    }
+
+    @PostMapping("/updateEmployeeActive")
+    public  ResponseEmployeeDto updateEmployeeActive(
+            @RequestBody EmployeeUpdateDto employeeUpdateDto, HttpServletRequest httpServletRequest){
+            Employee employee = getActiveAccount(httpServletRequest);
+            update(employeeUpdateDto, employee);
+            Employee employeeUpdate = employeeService.save(employee);
+            ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employeeUpdate, ResponseEmployeeDto.class);
+            return responseEmployeeDto;
     }
 }

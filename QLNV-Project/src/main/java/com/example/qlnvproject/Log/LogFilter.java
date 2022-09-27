@@ -34,7 +34,8 @@ public class LogFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogFilter.class);
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
@@ -58,10 +59,10 @@ public class LogFilter extends OncePerRequestFilter {
             LOGGER.info(
                     "\n FINISHED PROCESSING :\n USERNAME: {};\n METHOD: {};\n REQUESTURI: {};\n REQUEST: {};\n STATUS: {};" +
                             "\n RESPONSE: {};\n TIME TAKEN: {};\n Date:{} ",
-                    usernameLogin, request.getMethod(), request.getRequestURI(), requestBody, response.getStatus(), responseBody,
-                    timeTaken, date);
-            History history = new History(usernameLogin,request.getMethod(), request.getRequestURI(), requestBody, response.getStatus(), responseBody,
-                    timeTaken, date);
+                    usernameLogin, request.getMethod(), request.getRequestURI(), requestBody, response.getStatus(),
+                    responseBody, timeTaken, date);
+            History history = new History(usernameLogin,request.getMethod(), request.getRequestURI(), requestBody,
+                    response.getStatus(), responseBody, timeTaken, date);
             historyService.save(history);
         }else {
 
