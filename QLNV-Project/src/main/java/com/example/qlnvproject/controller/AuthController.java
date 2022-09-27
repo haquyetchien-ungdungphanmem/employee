@@ -27,6 +27,6 @@ public class AuthController extends BaseController{
 
         final String token = jwtUtil.GenerateToken(userDetails);
 
-        return ResponseEntity.ok(new ResponseTokenDTO(token));
+        return ResponseEntity.ok(new ResponseTokenDTO(token, userDetails.getUsername()));
     }
 }
