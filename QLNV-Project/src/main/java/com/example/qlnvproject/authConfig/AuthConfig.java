@@ -51,6 +51,8 @@ public class AuthConfig {
         http.csrf().disable().cors().disable();
 
         http.authorizeHttpRequests().antMatchers("/auth/**").permitAll()
+                .antMatchers("/role/**").hasRole("giamdoc")
+                .antMatchers("/department/**").hasRole("giamdoc")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtEntrypoint)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

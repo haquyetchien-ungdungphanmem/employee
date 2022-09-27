@@ -35,8 +35,8 @@ public class departmentController extends BaseController{
 
     }
 
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<departmentDto> getDepartmentById(@PathVariable long id){
+    @GetMapping("/getById")
+    public ResponseEntity<departmentDto> getDepartmentById(@RequestParam("id") long id){
         Department department = departmentService.getDepartmentById(id);
         departmentDto dpmResponse =modelMapper.map(department, departmentDto.class);
         return ResponseEntity.ok().body(dpmResponse);
@@ -48,8 +48,8 @@ public class departmentController extends BaseController{
         return departmentService.getAllDepartment().stream().map(department -> modelMapper.map(department, departmentDto.class)).collect(Collectors.toList());
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<departmentDto> updateDepartment(@PathVariable long id, @RequestBody departmentDto dpmDTO){
+    @PostMapping("/update")
+    public ResponseEntity<departmentDto> updateDepartment(@RequestParam("id") long id, @RequestBody departmentDto dpmDTO){
         Department dpmRequest = modelMapper.map(dpmDTO, Department.class);
         Department dpm = departmentService.updateDepartment(id, dpmRequest);
         departmentDto dpmResponse = modelMapper.map(dpm,departmentDto.class );
@@ -57,8 +57,8 @@ public class departmentController extends BaseController{
 
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteDepartmentById(@PathVariable long id){
+    @PostMapping("/delete")
+    public ResponseEntity<Void> deleteDepartmentById(@RequestParam("id") long id){
         departmentService.deleteDepartmentById(id);
         return ResponseEntity.noContent().build();
     }

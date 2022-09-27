@@ -18,4 +18,7 @@ public interface employeeService {
     List<Employee> getEmployeeByDepartmentId(long id);
 
     Employee findByUsername(String username);
+
+
+    Employee save(Employee empRequest);
 }

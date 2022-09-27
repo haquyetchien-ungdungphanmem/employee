@@ -57,6 +57,9 @@ public class employeeServiceImpl implements employeeService {
     @Override
     public Employee updateEmployee(long id, Employee employeeInput) {
         Employee emp = employeeRepository.findById(id).orElse(null);
+        emp.setPass(emp.getPass());
+        emp.setUsername(emp.getUsername());
+        emp.setRole(emp.getRole());
         emp.setFullname(employeeInput.getFullname());
         emp.setEmail(employeeInput.getEmail());
         emp.setBirthday(employeeInput.getBirthday());
@@ -97,6 +100,11 @@ public class employeeServiceImpl implements employeeService {
     @Override
     public Employee findByUsername(String username) {
         return employeeRepository.findByUsername(username);
+    }
+
+    @Override
+    public Employee save(Employee empRequest) {
+        return employeeRepository.save(empRequest);
     }
 
 }

@@ -1,11 +1,12 @@
 package com.example.qlnvproject.controller;
 
+import com.example.qlnvproject.dto.EmployeeUpdateDto;
 import com.example.qlnvproject.dto.ResponseEmployeeDto;
-import com.example.qlnvproject.dto.employeeDto;
+import com.example.qlnvproject.dto.employeeCreateDto;
 import com.example.qlnvproject.model.Employee;
 import com.example.qlnvproject.service.employeeService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +27,7 @@ public class employeeController extends BaseController{
 
     @PostMapping("/insert")
     @PreAuthorize("hasRole('giamdoc')")
-    public ResponseEntity<ResponseEmployeeDto> insertEmployee(@RequestBody employeeDto empDTO){
+    public ResponseEntity<ResponseEmployeeDto> insertEmployee(@RequestBody employeeCreateDto empDTO){
         if (employeeService.findByUsername(empDTO.getUsername()) == null) {
             Employee empRequest = modelMapper.map(empDTO, Employee.class);
             Employee emp = employeeService.insertEmployee(empRequest);
@@ -66,11 +67,15 @@ public class employeeController extends BaseController{
     }
 
     @PostMapping("/update")
-    public ResponseEntity<employeeDto> updateEmployeeById(@RequestParam("id") long id,  @RequestBody employeeDto empDTO){
-        Employee empRequest = modelMapper.map(empDTO, Employee.class);
-        Employee emp = employeeService.updateEmployee(id, empRequest);
-        employeeDto empResponse = modelMapper.map(emp, employeeDto.class);
-
+    public ResponseEntity<ResponseEmployeeDto> updateEmployeeById(@RequestParam("id") long id, @RequestBody EmployeeUpdateDto empDTO){
+        Employee employee = employeeService.getEmployeeById(id);
+        BeanUtils.copyProperties(empDTO, employee);
+        employee.setDepartment(employee.getDepartment());
+        employee.setPass(employee.getPass());
+        employee.setUsername(employee.getUsername());
+        employee.setRole(employee.getRole());
+        Employee emp = employeeService.save(employee);
+        ResponseEmployeeDto empResponse = modelMapper.map(emp, ResponseEmployeeDto.class);
         return ResponseEntity.ok().body(empResponse);
 
     }
@@ -86,11 +91,6 @@ public class employeeController extends BaseController{
     @PreAuthorize("hasAnyRole('truongphong', 'giamdoc')")
     public ResponseEntity<?> deleteInDepartment(@RequestParam("id") long id){
         employeeService.deleteInDepartmnetById(id);
-        return ResponseEntity.ok("Xóa nhân viên khỏi phòng ban thành công");
+        return ResponseEntity.ok("Delete success!");
     }
-
-
-
-
-
 }
