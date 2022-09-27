@@ -1,9 +1,11 @@
 package com.example.qlnvproject.controller;
 
+import com.example.qlnvproject.dto.DepartmentUpdateDto;
 import com.example.qlnvproject.dto.departmentDto;
 import com.example.qlnvproject.model.Department;
 import com.example.qlnvproject.service.departmentService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,14 +47,17 @@ public class departmentController extends BaseController{
 
     @GetMapping("/getAll")
     public List<departmentDto> getAllDepartment(){
-        return departmentService.getAllDepartment().stream().map(department -> modelMapper.map(department, departmentDto.class)).collect(Collectors.toList());
+        return departmentService.getAllDepartment().stream().map(department -> modelMapper.map(department,
+                departmentDto.class)).collect(Collectors.toList());
     }
 
     @PostMapping("/update")
-    public ResponseEntity<departmentDto> updateDepartment(@RequestParam("id") long id, @RequestBody departmentDto dpmDTO){
-        Department dpmRequest = modelMapper.map(dpmDTO, Department.class);
-        Department dpm = departmentService.updateDepartment(id, dpmRequest);
-        departmentDto dpmResponse = modelMapper.map(dpm,departmentDto.class );
+    public ResponseEntity<DepartmentUpdateDto> updateDepartment(@RequestParam("id") long id, @RequestBody DepartmentUpdateDto dpmDTO){
+        Department department = departmentService.getDepartmentById(id);
+        BeanUtils.copyProperties(dpmDTO, department);
+        department.setDepartment_id(department.getDepartment_id());
+        Department dpm = departmentService.save(department);
+        DepartmentUpdateDto dpmResponse = modelMapper.map(dpm,DepartmentUpdateDto.class );
         return ResponseEntity.ok().body(dpmResponse);
 
     }

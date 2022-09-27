@@ -9,7 +9,6 @@ import javax.validation.constraints.NotEmpty;
 public class departmentDto {
     private long department_id;
 
-    @NotEmpty
     private String departmentName;
 
 }
