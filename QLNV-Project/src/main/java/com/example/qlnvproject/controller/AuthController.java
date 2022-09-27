@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController extends BaseController{
-    @PostMapping("/singin")
+    @PostMapping("/login")
     public ResponseEntity<?> singin(@RequestBody SinginDto singinDto) throws Exception {
         try {
             authenticationManager.authenticate(
