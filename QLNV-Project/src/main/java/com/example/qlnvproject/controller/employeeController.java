@@ -99,4 +99,11 @@ public class employeeController extends BaseController{
             ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employeeUpdate, ResponseEmployeeDto.class);
             return responseEmployeeDto;
     }
+
+    @GetMapping("/getEmployeeActive")
+    public ResponseEmployeeDto getEmployeeActive(HttpServletRequest request){
+        Employee employee = getActiveAccount(request);
+        ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employee, ResponseEmployeeDto.class);
+        return responseEmployeeDto;
+    }
 }
