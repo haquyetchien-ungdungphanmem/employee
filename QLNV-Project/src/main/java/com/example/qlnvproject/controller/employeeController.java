@@ -99,6 +99,4 @@ public class employeeController extends BaseController{
             ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employeeUpdate, ResponseEmployeeDto.class);
             return responseEmployeeDto;
     }
-
-
 }
