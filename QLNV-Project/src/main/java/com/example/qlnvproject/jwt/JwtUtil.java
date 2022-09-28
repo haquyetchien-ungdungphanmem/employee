@@ -26,10 +26,6 @@ public class JwtUtil {
 
     private int jwtExpirationInMs;
 
-    @Value("${jwt.refreshExpirationDateInMs}")
-    public void setRefreshExpirationDateInMs(int refreshExpirationDateInMs) {
-        this.refreshExpirationDateInMs = refreshExpirationDateInMs;
-    }
     @Value("${jwt.secret}")
     public void setSecret(String secret) {
         this.secret = secret;
@@ -49,16 +45,16 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
         if (roles.contains(new SimpleGrantedAuthority(giamDoc))){
-            claims.put("isGiamDoc", true);
+            claims.put("isGiamDoc", "admin");
         }
         if (roles.contains(new SimpleGrantedAuthority(nhanVienNhanSu))){
-            claims.put("isNhanVienNhanSu", true);
+            claims.put("isNhanVienNhanSu", "staff");
         }
         if (roles.contains(new SimpleGrantedAuthority(truongPhong))){
-            claims.put("isTruongPhong", true);
+            claims.put("isTruongPhong", "mana");
         }
         if (roles.contains(new SimpleGrantedAuthority(nhanVien))){
-            claims.put("isNhanVien", true);
+            claims.put("isNhanVien", "user");
         }
 
         return doGenerateToken(claims, userDetails.getUsername());
