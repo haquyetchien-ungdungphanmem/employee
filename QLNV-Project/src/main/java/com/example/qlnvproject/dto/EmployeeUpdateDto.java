@@ -12,11 +12,7 @@ public class EmployeeUpdateDto {
 
     private String email;
 
-
-
     private String birthday;
-
-
 
 
     private String degree;

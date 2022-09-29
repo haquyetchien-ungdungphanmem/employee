@@ -45,17 +45,19 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
         if (roles.contains(new SimpleGrantedAuthority(giamDoc))){
-            claims.put("isGiamDoc", "admin");
+            claims.put("isGiamDoc", true);
         }
         if (roles.contains(new SimpleGrantedAuthority(nhanVienNhanSu))){
-            claims.put("isNhanVienNhanSu", "staff");
+            claims.put("isNhanVienNhanSu", true);
         }
         if (roles.contains(new SimpleGrantedAuthority(truongPhong))){
-            claims.put("isTruongPhong", "mana");
+            claims.put("isTruongPhong", true);
         }
         if (roles.contains(new SimpleGrantedAuthority(nhanVien))){
-            claims.put("isNhanVien", "user");
+            claims.put("isNhanVien", true);
         }
+
+
 
         return doGenerateToken(claims, userDetails.getUsername());
 

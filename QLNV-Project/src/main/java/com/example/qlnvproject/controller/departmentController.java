@@ -27,10 +27,10 @@ public class departmentController extends BaseController{
 
     @PostMapping("/insert")
     public ResponseEntity<departmentDto> insertDepartment(@RequestBody departmentDto dpmDTO){
-    //Convert entity to dto
+
     Department dpmRequest= modelMapper.map(dpmDTO, Department.class);
     Department dpm = departmentService.insertDepartment(dpmRequest);
-    //Convert dto to entity
+    
         departmentDto dpmResponse = modelMapper.map(dpm, departmentDto.class);
     return new ResponseEntity<departmentDto>(dpmResponse, HttpStatus.CREATED);
 
