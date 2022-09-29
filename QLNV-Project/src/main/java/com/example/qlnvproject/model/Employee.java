@@ -27,7 +27,7 @@ public class Employee {
     @Email
     private String email;
 
-
+    @JsonIgnore
     @NotEmpty
     @Size(min = 8, message = "password should have at least 8 characters")
     private String pass;

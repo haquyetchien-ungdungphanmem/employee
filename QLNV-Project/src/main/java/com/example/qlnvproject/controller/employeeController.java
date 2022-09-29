@@ -54,8 +54,8 @@ public class employeeController extends BaseController {
 
     @GetMapping("/getAll")
     @PreAuthorize("hasRole('giamdoc')")
-    public List<Employee> getAllEmployee() {
-        return employeeService.getAllEmployee().stream().map(employee -> modelMapper.map(employee, Employee.class))
+    public List<ResponseEmployeeDto> getAllEmployee() {
+        return employeeService.getAllEmployee().stream().map(employee -> modelMapper.map(employee, ResponseEmployeeDto.class))
                 .collect(Collectors.toList());
     }
 

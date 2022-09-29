@@ -17,9 +17,9 @@ public class ResponseEmployeeDto {
 
     private String birthday;
 
-    private Role roleId;
+    private Role role;
 
-    private Department department_id;
+    private Department department;
 
     private String degree;
 
