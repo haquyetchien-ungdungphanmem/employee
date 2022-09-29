@@ -14,6 +14,7 @@ public class EmployeeUpdateDto {
 
     private String birthday;
 
+    private long department_id;
 
     private String degree;
 

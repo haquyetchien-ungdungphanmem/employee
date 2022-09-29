@@ -35,11 +35,6 @@ public class JwtUtil {
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
-    public String doGenerateToken(Map<String, Object> claims, String subject){
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
-    }
 
     public String GenerateToken(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
@@ -59,7 +54,10 @@ public class JwtUtil {
 
 
 
-        return doGenerateToken(claims, userDetails.getUsername());
+        return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
 
     }
 

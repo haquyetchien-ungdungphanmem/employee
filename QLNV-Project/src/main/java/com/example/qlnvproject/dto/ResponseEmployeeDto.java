@@ -1,5 +1,7 @@
 package com.example.qlnvproject.dto;
 
+import com.example.qlnvproject.model.Department;
+import com.example.qlnvproject.model.Role;
 import lombok.Data;
 
 @Data
@@ -15,9 +17,9 @@ public class ResponseEmployeeDto {
 
     private String birthday;
 
-    private long roleId;
+    private Role roleId;
 
-    private long department_id;
+    private Department department_id;
 
     private String degree;
 

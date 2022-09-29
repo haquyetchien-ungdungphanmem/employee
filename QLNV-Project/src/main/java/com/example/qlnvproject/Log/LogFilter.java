@@ -54,7 +54,7 @@ public class LogFilter extends OncePerRequestFilter {
         String responseBody = getStringValue(responseWrapper.getContentAsByteArray(),
                 response.getCharacterEncoding());
 
-        if (token != null && request.getMethod().equals("POST")){
+        if (token != null && request.getMethod().equals("POST") && request.getRequestURI().endsWith("update")){
             String usernameLogin = jwtUtil.getUsernameByToken(token);
             LOGGER.info(
                     "\n FINISHED PROCESSING :\n USERNAME: {};\n METHOD: {};\n REQUESTURI: {};\n REQUEST: {};\n STATUS: {};" +
@@ -64,8 +64,6 @@ public class LogFilter extends OncePerRequestFilter {
             History history = new History(usernameLogin,request.getMethod(), request.getRequestURI(), requestBody,
                     response.getStatus(), responseBody, timeTaken, date);
             historyService.save(history);
-        }else {
-
         }
         responseWrapper.copyBodyToResponse();
     }

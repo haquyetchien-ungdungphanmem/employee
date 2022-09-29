@@ -1,5 +1,6 @@
 package com.example.qlnvproject.service.impl;
 
+import com.example.qlnvproject.dto.EmployeeUpdateDto;
 import com.example.qlnvproject.jwt.JwtFilter;
 import com.example.qlnvproject.jwt.JwtUtil;
 import com.example.qlnvproject.model.Department;
@@ -9,6 +10,7 @@ import com.example.qlnvproject.repository.RoleRepository;
 import com.example.qlnvproject.repository.departmentRepository;
 import com.example.qlnvproject.repository.employeeRepository;
 import com.example.qlnvproject.service.employeeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,19 +56,6 @@ public class employeeServiceImpl implements employeeService {
         return employeeRepository.findAll();
     }
 
-    @Override
-    public Employee updateEmployee(long id, Employee employeeInput) {
-        Employee emp = employeeRepository.findById(id).orElse(null);
-        emp.setPass(emp.getPass());
-        emp.setUsername(emp.getUsername());
-        emp.setRole(emp.getRole());
-        emp.setFullname(employeeInput.getFullname());
-        emp.setEmail(employeeInput.getEmail());
-        emp.setBirthday(employeeInput.getBirthday());
-        emp.setDegree(employeeInput.getDegree());
-        emp.setSpecialize(employeeInput.getSpecialize());
-        return employeeRepository.save(employeeInput);
-    }
 
     @Override
     public void deleteEmployeeById(long id) {
@@ -103,8 +92,69 @@ public class employeeServiceImpl implements employeeService {
     }
 
     @Override
-    public Employee save(Employee empRequest) {
-        return employeeRepository.save(empRequest);
+    public Employee save(Employee employee) {
+        employee.setPass(passwordEncoder.encode(employee.getPass()));
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    public Employee updateEmployee(Employee employee
+            , Employee employeeLogin, EmployeeUpdateDto employeeUpdateDto) {
+        Department department = departmentRepository.findById(employeeUpdateDto.getDepartment_id()).get();
+        if (employeeLogin.getRole().getRoleId() == 1) {
+            BeanUtils.copyProperties(employeeUpdateDto, employee);
+            employee.setDepartment(department);
+            employee.setPass(employee.getPass());
+            employee.setUsername(employee.getUsername());
+            employee.setRole(employee.getRole());
+            return employeeRepository.save(employee);
+        } else if (employeeLogin.getRole().getRoleId() == 2
+                && employee.getDepartment() != null
+                && employeeLogin.getDepartment().getDepartment_id() == employee.getDepartment().getDepartment_id()
+        ) {
+            BeanUtils.copyProperties(employeeUpdateDto, employee);
+            employee.setDepartment(employee.getDepartment());
+            employee.setPass(employee.getPass());
+            employee.setUsername(employee.getUsername());
+            employee.setRole(employee.getRole());
+            return employeeRepository.save(employee);
+        } else if (employeeLogin.getRole().getRoleId() == 3 && employee.getRole().getRoleId() == 4) {
+            BeanUtils.copyProperties(employeeUpdateDto, employee);
+            employee.setDepartment(employee.getDepartment());
+            employee.setPass(employee.getPass());
+            employee.setUsername(employee.getUsername());
+            employee.setRole(employee.getRole());
+            return employeeRepository.save(employee);
+        } else if (employeeLogin.getRole().getRoleId() == 4 && employeeLogin.getUsername().equals(employee.getUsername())) {
+            BeanUtils.copyProperties(employeeUpdateDto, employee);
+            employee.setDepartment(employee.getDepartment());
+            employee.setPass(employee.getPass());
+            employee.setUsername(employee.getUsername());
+            employee.setRole(employee.getRole());
+            return employeeRepository.save(employee);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Employee findEmployeeById(Employee employeeFind, Employee employeeLogin) {
+        if (employeeLogin.getRole().getRoleId() == 1) {
+            return employeeRepository.findById(employeeFind.getId()).get();
+        } else if (employeeLogin.getRole().getRoleId() == 2
+                && employeeFind.getDepartment() != null
+                && employeeLogin.getDepartment().getDepartment_id() == employeeFind.getDepartment().getDepartment_id()
+        ) {
+            return employeeRepository.findById(employeeFind.getId()).get();
+        } else if (employeeLogin.getRole().getRoleId() == 3
+                && employeeFind.getRole().getRoleId() == 4) {
+            return employeeRepository.findById(employeeFind.getId()).get();
+        } else if (employeeLogin.getRole().getRoleId() == 4
+                && employeeLogin.getId() == employeeFind.getId()) {
+            return employeeRepository.findById(employeeFind.getId()).get();
+        } else {
+            return null;
+        }
     }
 
 }

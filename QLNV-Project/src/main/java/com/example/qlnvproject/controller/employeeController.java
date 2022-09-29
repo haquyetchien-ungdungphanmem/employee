@@ -18,20 +18,20 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("employee")
-public class employeeController extends BaseController{
+public class employeeController extends BaseController {
     private ModelMapper modelMapper;
 
-    public employeeController(employeeService employeeService, ModelMapper modelMapper){
+    public employeeController(employeeService employeeService, ModelMapper modelMapper) {
         this.employeeService = employeeService;
         this.modelMapper = modelMapper;
     }
 
     @PostMapping("/insert")
     @PreAuthorize("hasRole('giamdoc')")
-    public ResponseEntity<ResponseEmployeeDto> insertEmployee(@RequestBody employeeCreateDto empDTO){
+    public ResponseEntity<ResponseEmployeeDto> insertEmployee(@RequestBody employeeCreateDto empDTO) {
         if (employeeService.findByUsername(empDTO.getUsername()) == null) {
             Employee empRequest = modelMapper.map(empDTO, Employee.class);
-            Employee emp = employeeService.insertEmployee(empRequest);
+            Employee emp = employeeService.save(empRequest);
             ResponseEmployeeDto empResponse = modelMapper.map(emp, ResponseEmployeeDto.class);
             return new ResponseEntity<ResponseEmployeeDto>(empResponse, HttpStatus.CREATED);
         }
@@ -39,22 +39,29 @@ public class employeeController extends BaseController{
     }
 
     @GetMapping("/getById")
-    public ResponseEntity<ResponseEmployeeDto> getEmployeeById(@RequestParam("id") long id){
+    public ResponseEntity<ResponseEmployeeDto> getEmployeeById(@RequestParam("id") long id, HttpServletRequest request) {
+
         Employee emp = employeeService.getEmployeeById(id);
-        ResponseEmployeeDto empResponse =modelMapper.map(emp, ResponseEmployeeDto.class);
-        return ResponseEntity.ok().body(empResponse);
+        Employee employeeLogin = getActiveAccount(request);
+        Employee employeeRespon = employeeService.findEmployeeById(emp, employeeLogin);
+        if (employeeRespon != null) {
+            ResponseEmployeeDto empResponse = modelMapper.map(emp, ResponseEmployeeDto.class);
+            return ResponseEntity.ok().body(empResponse);
+        }else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/getAll")
     @PreAuthorize("hasRole('giamdoc')")
-    public List<ResponseEmployeeDto> getAllEmployee(){
-        return employeeService.getAllEmployee().stream().map(employee -> modelMapper.map(employee, ResponseEmployeeDto.class))
+    public List<Employee> getAllEmployee() {
+        return employeeService.getAllEmployee().stream().map(employee -> modelMapper.map(employee, Employee.class))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/getEmployeeByRoleNhanVien")
     @PreAuthorize("hasAnyRole('giamdoc', 'nhanviennhansu')")
-    public List<ResponseEmployeeDto> getEmployeeByRoleNhanVien(){
+    public List<ResponseEmployeeDto> getEmployeeByRoleNhanVien() {
         return employeeService.getEmployeeByRoleNhanVien(4).stream().map(employee
                 -> modelMapper.map(employee, ResponseEmployeeDto.class)).collect(Collectors.toList());
 
@@ -62,48 +69,54 @@ public class employeeController extends BaseController{
 
     @GetMapping("/getEmployeeByDepartmentId")
     @PreAuthorize("hasAnyRole('giamdoc','truongphong')")
-    public List<ResponseEmployeeDto> getEmployeeByDepartmentId(@RequestParam("id") long id){
+    public List<ResponseEmployeeDto> getEmployeeByDepartmentId(@RequestParam("id") long id) {
         return employeeService.getEmployeeByDepartmentId(id).stream().map(employee
                 -> modelMapper.map(employee, ResponseEmployeeDto.class)).collect(Collectors.toList());
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<ResponseEmployeeDto> updateEmployeeById(@RequestParam("id") long id, @RequestBody EmployeeUpdateDto empDTO){
-        Employee employee = employeeService.getEmployeeById(id);
-        update(empDTO, employee);
-        Employee emp = employeeService.save(employee);
-        ResponseEmployeeDto empResponse = modelMapper.map(emp, ResponseEmployeeDto.class);
-        return ResponseEntity.ok().body(empResponse);
-    }
 
     @PostMapping("/delete")
     @PreAuthorize("hasRole('giamdoc')")
-    public ResponseEntity<?> deleteEmployeeById(@RequestParam("id") long id){
+    public ResponseEntity<?> deleteEmployeeById(@RequestParam("id") long id) {
         employeeService.deleteEmployeeById(id);
         return ResponseEntity.ok("Delete success!");
     }
 
     @PostMapping("/deteleInDepartment")
     @PreAuthorize("hasAnyRole('truongphong', 'giamdoc')")
-    public ResponseEntity<?> deleteInDepartment(@RequestParam("id") long id){
+    public ResponseEntity<?> deleteInDepartment(@RequestParam("id") long id) {
         employeeService.deleteInDepartmnetById(id);
         return ResponseEntity.ok("Delete success!");
     }
 
     @PostMapping("/updateEmployeeActive")
-    public  ResponseEmployeeDto updateEmployeeActive(
-            @RequestBody EmployeeUpdateDto employeeUpdateDto, HttpServletRequest httpServletRequest){
-            Employee employee = getActiveAccount(httpServletRequest);
-            update(employeeUpdateDto, employee);
-            Employee employeeUpdate = employeeService.save(employee);
-            ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employeeUpdate, ResponseEmployeeDto.class);
-            return responseEmployeeDto;
+    public ResponseEmployeeDto updateEmployeeActive(
+            @RequestBody EmployeeUpdateDto employeeUpdateDto, HttpServletRequest httpServletRequest) {
+        Employee employee = getActiveAccount(httpServletRequest);
+        update(employeeUpdateDto, employee);
+        Employee employeeUpdate = employeeService.save(employee);
+        ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employeeUpdate, ResponseEmployeeDto.class);
+        return responseEmployeeDto;
     }
 
     @GetMapping("/getEmployeeActive")
-    public ResponseEmployeeDto getEmployeeActive(HttpServletRequest request){
+    public ResponseEmployeeDto getEmployeeActive(HttpServletRequest request) {
         Employee employee = getActiveAccount(request);
         ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employee, ResponseEmployeeDto.class);
         return responseEmployeeDto;
+    }
+
+    @PostMapping("/updateEmployee")
+    public ResponseEntity<?> updateEmployee(@RequestParam("id") long id
+            , @RequestBody EmployeeUpdateDto employeeUpdateDto, HttpServletRequest request) throws Exception {
+        Employee employeeLogin = getActiveAccount(request);
+        Employee employeeUpdate = employeeService.getEmployeeById(id);
+        Employee employeeRespon = employeeService.updateEmployee(employeeUpdate, employeeLogin, employeeUpdateDto);
+        if (employeeRespon != null) {
+            ResponseEmployeeDto responseEmployeeDto = modelMapper.map(employeeRespon, ResponseEmployeeDto.class);
+            return ResponseEntity.ok(responseEmployeeDto);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

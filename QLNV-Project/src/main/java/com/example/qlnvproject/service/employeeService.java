@@ -1,5 +1,7 @@
 package com.example.qlnvproject.service;
 
+import com.example.qlnvproject.dto.EmployeeUpdateDto;
+import com.example.qlnvproject.model.Department;
 import com.example.qlnvproject.model.Employee;
 
 import java.util.List;
@@ -8,7 +10,7 @@ public interface employeeService {
     Employee insertEmployee(Employee emp);
     Employee getEmployeeById(long id);
     List<Employee> getAllEmployee();
-    Employee updateEmployee(long id, Employee emp);
+
     void deleteEmployeeById(long id);
 
     void deleteInDepartmnetById(long id);
@@ -21,4 +23,8 @@ public interface employeeService {
 
 
     Employee save(Employee empRequest);
+
+    Employee updateEmployee(Employee employee, Employee employeeLogin, EmployeeUpdateDto employeeUpdateDto);
+
+    Employee findEmployeeById( Employee employeeFind, Employee employeeLogin);
 }
