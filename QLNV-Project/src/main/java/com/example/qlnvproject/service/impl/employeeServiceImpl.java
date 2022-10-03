@@ -97,6 +97,14 @@ public class employeeServiceImpl implements employeeService {
         return employeeRepository.save(employee);
     }
 
+    public void set(EmployeeUpdateDto employeeUpdateDto, Employee employee){
+        BeanUtils.copyProperties(employeeUpdateDto, employee);
+        employee.setDepartment(employee.getDepartment());
+        employee.setPass(employee.getPass());
+        employee.setUsername(employee.getUsername());
+        employee.setRole(employee.getRole());
+    }
+
     @Override
     public Employee updateEmployee(Employee employee
             , Employee employeeLogin, EmployeeUpdateDto employeeUpdateDto) {
@@ -112,25 +120,13 @@ public class employeeServiceImpl implements employeeService {
                 && employee.getDepartment() != null
                 && employeeLogin.getDepartment().getDepartment_id() == employee.getDepartment().getDepartment_id()
         ) {
-            BeanUtils.copyProperties(employeeUpdateDto, employee);
-            employee.setDepartment(employee.getDepartment());
-            employee.setPass(employee.getPass());
-            employee.setUsername(employee.getUsername());
-            employee.setRole(employee.getRole());
+            set(employeeUpdateDto, employee);
             return employeeRepository.save(employee);
         } else if (employeeLogin.getRole().getRoleId() == 3 && employee.getRole().getRoleId() == 4) {
-            BeanUtils.copyProperties(employeeUpdateDto, employee);
-            employee.setDepartment(employee.getDepartment());
-            employee.setPass(employee.getPass());
-            employee.setUsername(employee.getUsername());
-            employee.setRole(employee.getRole());
+            set(employeeUpdateDto, employee);
             return employeeRepository.save(employee);
         } else if (employeeLogin.getRole().getRoleId() == 4 && employeeLogin.getUsername().equals(employee.getUsername())) {
-            BeanUtils.copyProperties(employeeUpdateDto, employee);
-            employee.setDepartment(employee.getDepartment());
-            employee.setPass(employee.getPass());
-            employee.setUsername(employee.getUsername());
-            employee.setRole(employee.getRole());
+            set(employeeUpdateDto, employee);
             return employeeRepository.save(employee);
         } else {
             return null;
