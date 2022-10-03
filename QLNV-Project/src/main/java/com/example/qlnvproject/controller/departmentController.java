@@ -16,8 +16,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/department")
-public class departmentController extends BaseController{
+public class departmentController {
 
+    @Autowired
+    public departmentService departmentService;
     private final ModelMapper modelMapper;
 
     public departmentController(departmentService departmentService, ModelMapper modelMapper){

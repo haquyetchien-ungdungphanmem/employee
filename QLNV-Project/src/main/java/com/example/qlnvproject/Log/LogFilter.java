@@ -54,7 +54,7 @@ public class LogFilter extends OncePerRequestFilter {
         String responseBody = getStringValue(responseWrapper.getContentAsByteArray(),
                 response.getCharacterEncoding());
 
-        if (token != null && request.getMethod().equals("POST") && request.getRequestURI().endsWith("update")){
+        if (token != null && request.getMethod().equals("POST")){
             String usernameLogin = jwtUtil.getUsernameByToken(token);
             LOGGER.info(
                     "\n FINISHED PROCESSING :\n USERNAME: {};\n METHOD: {};\n REQUESTURI: {};\n REQUEST: {};\n STATUS: {};" +

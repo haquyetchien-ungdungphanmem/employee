@@ -5,6 +5,7 @@ import com.example.qlnvproject.dto.RoleDto;
 import com.example.qlnvproject.model.Role;
 import com.example.qlnvproject.service.RoleService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/role")
-public class RoleController extends BaseController{
-
+public class RoleController{
+    @Autowired
+    public RoleService roleService;
     public RoleController(RoleService roleService, ModelMapper modelMapper) {
         this.roleService = roleService;
         this.modelMapper = modelMapper;

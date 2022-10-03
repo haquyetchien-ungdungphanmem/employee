@@ -3,10 +3,15 @@ package com.example.qlnvproject.controller;
 import com.example.qlnvproject.dto.EmployeeUpdateDto;
 import com.example.qlnvproject.dto.ResponseEmployeeDto;
 import com.example.qlnvproject.dto.employeeCreateDto;
+import com.example.qlnvproject.jwt.JwtFilter;
+import com.example.qlnvproject.jwt.JwtUtil;
 import com.example.qlnvproject.model.Employee;
 import com.example.qlnvproject.service.employeeService;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +23,21 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("employee")
-public class employeeController extends BaseController {
+public class employeeController{
+
+    @Autowired
+    public employeeService employeeService;
+
+
+
+    @Autowired
+    JwtUtil jwtUtil;
+
+    @Autowired
+    JwtFilter jwtFilter;
+
+
+
     private ModelMapper modelMapper;
 
     public employeeController(employeeService employeeService, ModelMapper modelMapper) {
@@ -118,5 +137,19 @@ public class employeeController extends BaseController {
         } else {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    public Employee getActiveAccount(HttpServletRequest httpServletRequest){
+        String token = jwtFilter.jwtByRequest(httpServletRequest);
+        String usernameByToken = jwtUtil.getUsernameByToken(token);
+        return employeeService.findByUsername(usernameByToken);
+    }
+
+    public void update(EmployeeUpdateDto employeeUpdateDto, Employee employee){
+        BeanUtils.copyProperties(employeeUpdateDto, employee);
+        employee.setDepartment(employee.getDepartment());
+        employee.setPass(employee.getPass());
+        employee.setUsername(employee.getUsername());
+        employee.setRole(employee.getRole());
     }
 }
