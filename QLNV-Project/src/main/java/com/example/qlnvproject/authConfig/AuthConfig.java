@@ -53,6 +53,8 @@ public class AuthConfig {
         http.authorizeHttpRequests().antMatchers("/auth/**").permitAll()
                 .antMatchers("/role/**").hasRole("giamdoc")
                 .antMatchers("/department/**").hasRole("giamdoc")
+                .antMatchers("/roleUri/**").hasRole("giamdoc")
+                .antMatchers("/uri/**").hasRole("giamdoc")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtEntrypoint)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

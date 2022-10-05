@@ -21,4 +21,8 @@ public class Role {
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Employee> employeeList;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private  List<RoleUri> roleList;
 }
