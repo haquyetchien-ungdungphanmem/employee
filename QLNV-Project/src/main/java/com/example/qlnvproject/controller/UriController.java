@@ -17,10 +17,17 @@ public class UriController {
     UriService uriService;
 
     @PostMapping("/create")
-    public Uri create(@RequestBody UriDto uriDto){
+    public ResponseEntity<?> create(@RequestBody UriDto uriDto){
         Uri uri = new Uri();
         BeanUtils.copyProperties(uriDto, uri);
-        return uriService.save(uri);
+        if (uriService.save(uri) != null){
+            uriService.save(uri);
+            return ResponseEntity.ok().body(uri);
+        }else {
+            return ResponseEntity.badRequest().build();
+        }
+
+
     }
 
     @PostMapping("/delete")
@@ -39,5 +46,10 @@ public class UriController {
     @GetMapping("/getAll")
     public List<Uri> getAll(){
         return uriService.getAll();
+    }
+
+    @GetMapping("/getByUri")
+    public Uri getByUri(@RequestParam("uri") String uri){
+        return uriService.findByUri(uri);
     }
 }

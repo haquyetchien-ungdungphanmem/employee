@@ -19,4 +19,8 @@ public class Uri {
     @OneToMany(mappedBy = "uri", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<RoleUri> uriList;
+
+    @OneToOne(mappedBy = "uri", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private LogWithUri logWithUriList;
 }

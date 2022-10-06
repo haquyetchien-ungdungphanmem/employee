@@ -14,7 +14,12 @@ public class UriServiceImpl implements UriService {
     UriReponsitory uriReponsitory;
     @Override
     public Uri save(Uri uri) {
-        return uriReponsitory.save(uri);
+        if (findByUri(uri.getUri()) == null){
+            return uriReponsitory.save(uri);
+        }else {
+            return null;
+        }
+
     }
 
     @Override
@@ -30,5 +35,10 @@ public class UriServiceImpl implements UriService {
     @Override
     public List<Uri> getAll() {
         return uriReponsitory.findAll();
+    }
+
+    @Override
+    public Uri findByUri(String requestUri) {
+        return uriReponsitory.findByUri(requestUri);
     }
 }

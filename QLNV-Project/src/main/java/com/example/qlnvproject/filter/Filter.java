@@ -1,9 +1,12 @@
-package com.example.qlnvproject.Log;
+package com.example.qlnvproject.filter;
 
 import com.example.qlnvproject.jwt.JwtFilter;
 import com.example.qlnvproject.jwt.JwtUtil;
+import com.example.qlnvproject.model.Employee;
 import com.example.qlnvproject.model.History;
-import com.example.qlnvproject.service.HistoryService;
+import com.example.qlnvproject.model.RoleUri;
+import com.example.qlnvproject.model.Uri;
+import com.example.qlnvproject.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 @Component
-public class LogFilter extends OncePerRequestFilter {
+
+public class Filter extends OncePerRequestFilter {
 
     @Autowired
     JwtFilter jwtFilter;
@@ -32,7 +36,20 @@ public class LogFilter extends OncePerRequestFilter {
     @Autowired
     HistoryService historyService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogFilter.class);
+    @Autowired
+    employeeService employeeService;
+
+    @Autowired
+    RoleUriService roleUriService;
+
+    @Autowired
+    UriService uriService;
+
+    @Autowired
+    LogWithUriService logWithUriService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Filter.class);
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -54,18 +71,35 @@ public class LogFilter extends OncePerRequestFilter {
         String responseBody = getStringValue(responseWrapper.getContentAsByteArray(),
                 response.getCharacterEncoding());
 
-        if (token != null && request.getMethod().equals("POST")){
-            String usernameLogin = jwtUtil.getUsernameByToken(token);
-            LOGGER.info(
-                    "\n FINISHED PROCESSING :\n USERNAME: {};\n METHOD: {};\n REQUESTURI: {};\n REQUEST: {};\n STATUS: {};" +
-                            "\n RESPONSE: {};\n TIME TAKEN: {};\n Date:{} ",
-                    usernameLogin, request.getMethod(), request.getRequestURI(), requestBody, response.getStatus(),
-                    responseBody, timeTaken, date);
-            History history = new History(usernameLogin,request.getMethod(), request.getRequestURI(), requestBody,
-                    response.getStatus(), responseBody, timeTaken, date);
-            historyService.save(history);
+
+
+        if (token != null) {
+            String username = jwtUtil.getUsernameByToken(token);
+            Employee employee = employeeService.findByUsername(username);
+            String requestUri = request.getRequestURI();
+            Uri uri = uriService.findByUri(requestUri);
+            RoleUri roleUri = roleUriService.findByRoleIdAndUriId(employee.getRole(), uri);
+            if (roleUri != null){
+                if ( request.getMethod().equals("POST") && logWithUriService.findByUri(request.getRequestURI()) != null) {
+                    String usernameLogin = jwtUtil.getUsernameByToken(token);
+                    LOGGER.info(
+                            "\n FINISHED PROCESSING :\n USERNAME: {};\n METHOD: {};\n REQUESTURI: {};\n REQUEST: {};\n STATUS: {};" +
+                                    "\n RESPONSE: {};\n TIME TAKEN: {};\n Date:{} ",
+                            usernameLogin, request.getMethod(), request.getRequestURI(), requestBody, response.getStatus(),
+                            responseBody, timeTaken, date);
+                    History history = new History(usernameLogin, request.getMethod(), request.getRequestURI(), requestBody,
+                            response.getStatus(), responseBody, timeTaken, date);
+                    historyService.save(history);
+                }
+                responseWrapper.copyBodyToResponse();
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+        }else {
+            responseWrapper.copyBodyToResponse();
         }
-        responseWrapper.copyBodyToResponse();
+
+
     }
 
     private String getStringValue(byte[] contentAsByteArray, String characterEncoding) {

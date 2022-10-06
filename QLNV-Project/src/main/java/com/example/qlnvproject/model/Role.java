@@ -12,6 +12,7 @@ import java.util.List;
 @Table(name = "role")
 public class Role {
     @Id
+
     private long roleId;
 
 

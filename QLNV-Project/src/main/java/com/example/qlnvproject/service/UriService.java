@@ -12,4 +12,6 @@ public interface UriService {
     Uri findById(long id);
 
     List<Uri> getAll();
+
+    Uri findByUri(String requestUri);
 }

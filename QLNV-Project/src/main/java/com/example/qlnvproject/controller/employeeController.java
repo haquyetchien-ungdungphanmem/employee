@@ -70,7 +70,7 @@ public class employeeController{
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize("hasRole('giamdoc')")
+
     public List<ResponseEmployeeDto> getAllEmployee() {
         return employeeService.getAllEmployee().stream().map(employee -> modelMapper.map(employee, ResponseEmployeeDto.class))
                 .collect(Collectors.toList());

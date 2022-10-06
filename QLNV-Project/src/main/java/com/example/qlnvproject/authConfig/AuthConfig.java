@@ -1,5 +1,6 @@
 package com.example.qlnvproject.authConfig;
 
+
 import com.example.qlnvproject.jwt.JwtEntrypoint;
 import com.example.qlnvproject.jwt.JwtFilter;
 import com.example.qlnvproject.service.AccountService;
@@ -30,6 +31,8 @@ public class AuthConfig {
     @Autowired
     JwtFilter jwtFilter;
 
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -51,15 +54,12 @@ public class AuthConfig {
         http.csrf().disable().cors();
 
         http.authorizeHttpRequests().antMatchers("/auth/**").permitAll()
-                .antMatchers("/role/**").hasRole("giamdoc")
-                .antMatchers("/department/**").hasRole("giamdoc")
-                .antMatchers("/roleUri/**").hasRole("giamdoc")
-                .antMatchers("/uri/**").hasRole("giamdoc")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtEntrypoint)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
 
 
         return http.build();

@@ -25,9 +25,15 @@ public class RoleUriServiceImpl implements RoleUriService {
     public RoleUri save(RoleUriDto roleUriDto, RoleUri roleUri ) {
         Role role = roleRepository.findById(roleUriDto.getRoleId()).get();
         Uri uri = uriReponsitory.findById(roleUriDto.getUriId()).get();
-        roleUri.setRole(role);
-        roleUri.setUri(uri);
-        return roleUriReponsitory.save(roleUri);
+        if (findByRoleIdAndUriId(role, uri) == null){
+            roleUri.setRole(role);
+            roleUri.setUri(uri);
+            return roleUriReponsitory.save(roleUri);
+        }else {
+            return null;
+        }
+
+
     }
 
     @Override
@@ -43,5 +49,15 @@ public class RoleUriServiceImpl implements RoleUriService {
     @Override
     public List<RoleUri> getAll() {
         return roleUriReponsitory.findAll();
+    }
+
+    @Override
+    public List<RoleUri> findByRoleId(Role role) {
+        return roleUriReponsitory.findByRole(role);
+    }
+
+    @Override
+    public RoleUri findByRoleIdAndUriId(Role roleId, Uri uriId) {
+        return roleUriReponsitory.getRoleUriByRoleAndUri(roleId, uriId);
     }
 }

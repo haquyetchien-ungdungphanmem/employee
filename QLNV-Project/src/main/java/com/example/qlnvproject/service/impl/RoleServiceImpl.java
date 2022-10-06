@@ -16,8 +16,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role save(Role roleRequest) {
-        roleRepository.save(roleRequest);
-        return roleRequest;
+        if (findByRole(roleRequest.getRoleName()) == null && findById(roleRequest.getRoleId()) == null){
+            roleRepository.save(roleRequest);
+            return roleRequest;
+        }else {
+            return null;
+        }
     }
 
     @Override
@@ -28,5 +32,20 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void deleteByRoleId(long id) {
         roleRepository.deleteById(id);
+    }
+
+    @Override
+    public Role findById(long roleId) {
+        if (roleRepository.findByRoleId(roleId) == null){
+            return null;
+        }else {
+            return roleRepository.findByRoleId(roleId);
+        }
+
+    }
+
+    @Override
+    public Role findByRole(String role) {
+        return roleRepository.findByRoleName(role);
     }
 }
