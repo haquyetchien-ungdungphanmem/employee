@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("employee")
-public class employeeController{
+public class employeeController {
 
     @Autowired
     public employeeService employeeService;
@@ -35,7 +35,6 @@ public class employeeController{
     JwtFilter jwtFilter;
 
 
-
     private ModelMapper modelMapper;
 
     public employeeController(employeeService employeeService, ModelMapper modelMapper) {
@@ -44,7 +43,7 @@ public class employeeController{
     }
 
     @PostMapping("/insert")
-    @PreAuthorize("hasRole('giamdoc')")
+
     public ResponseEntity<ResponseEmployeeDto> insertEmployee(@RequestBody employeeCreateDto empDTO) {
         if (employeeService.findByUsername(empDTO.getUsername()) == null) {
             Employee empRequest = modelMapper.map(empDTO, Employee.class);
@@ -64,7 +63,7 @@ public class employeeController{
         if (employeeRespon != null) {
             ResponseEmployeeDto empResponse = modelMapper.map(emp, ResponseEmployeeDto.class);
             return ResponseEntity.ok().body(empResponse);
-        }else {
+        } else {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -77,7 +76,7 @@ public class employeeController{
     }
 
     @GetMapping("/getEmployeeByRoleNhanVien")
-    @PreAuthorize("hasAnyRole('giamdoc', 'nhanviennhansu')")
+
     public List<ResponseEmployeeDto> getEmployeeByRoleNhanVien() {
         return employeeService.getEmployeeByRoleNhanVien(4).stream().map(employee
                 -> modelMapper.map(employee, ResponseEmployeeDto.class)).collect(Collectors.toList());
@@ -85,7 +84,7 @@ public class employeeController{
     }
 
     @GetMapping("/getEmployeeByDepartmentId")
-    @PreAuthorize("hasAnyRole('giamdoc','truongphong')")
+
     public List<ResponseEmployeeDto> getEmployeeByDepartmentId(@RequestParam("id") long id) {
         return employeeService.getEmployeeByDepartmentId(id).stream().map(employee
                 -> modelMapper.map(employee, ResponseEmployeeDto.class)).collect(Collectors.toList());
@@ -93,14 +92,14 @@ public class employeeController{
 
 
     @PostMapping("/delete")
-    @PreAuthorize("hasRole('giamdoc')")
+
     public ResponseEntity<?> deleteEmployeeById(@RequestParam("id") long id) {
         employeeService.deleteEmployeeById(id);
         return ResponseEntity.ok("Delete success!");
     }
 
     @PostMapping("/deteleInDepartment")
-    @PreAuthorize("hasAnyRole('truongphong', 'giamdoc')")
+    
     public ResponseEntity<?> deleteInDepartment(@RequestParam("id") long id) {
         employeeService.deleteInDepartmnetById(id);
         return ResponseEntity.ok("Delete success!");
@@ -137,13 +136,13 @@ public class employeeController{
         }
     }
 
-    public Employee getActiveAccount(HttpServletRequest httpServletRequest){
+    public Employee getActiveAccount(HttpServletRequest httpServletRequest) {
         String token = jwtFilter.jwtByRequest(httpServletRequest);
         String usernameByToken = jwtUtil.getUsernameByToken(token);
         return employeeService.findByUsername(usernameByToken);
     }
 
-    public void update(EmployeeUpdateDto employeeUpdateDto, Employee employee){
+    public void update(EmployeeUpdateDto employeeUpdateDto, Employee employee) {
         BeanUtils.copyProperties(employeeUpdateDto, employee);
         employee.setDepartment(employee.getDepartment());
         employee.setPass(employee.getPass());

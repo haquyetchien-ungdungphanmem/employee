@@ -14,5 +14,5 @@ public interface employeeRepository extends JpaRepository<Employee, Long> {
 
     List<Employee> getEmployeesByDepartment(Department department);
 
-    Boolean existsByUsername(String username);
+
 }
