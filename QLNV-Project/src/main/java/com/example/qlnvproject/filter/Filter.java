@@ -93,7 +93,8 @@ public class Filter extends OncePerRequestFilter {
                 }
                 responseWrapper.copyBodyToResponse();
             } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
             }
         }else {
             responseWrapper.copyBodyToResponse();
