@@ -76,7 +76,6 @@ public class employeeController {
     }
 
     @GetMapping("/getEmployeeByRoleNhanVien")
-
     public List<ResponseEmployeeDto> getEmployeeByRoleNhanVien() {
         return employeeService.getEmployeeByRoleNhanVien(4).stream().map(employee
                 -> modelMapper.map(employee, ResponseEmployeeDto.class)).collect(Collectors.toList());
@@ -84,7 +83,6 @@ public class employeeController {
     }
 
     @GetMapping("/getEmployeeByDepartmentId")
-
     public List<ResponseEmployeeDto> getEmployeeByDepartmentId(@RequestParam("id") long id) {
         return employeeService.getEmployeeByDepartmentId(id).stream().map(employee
                 -> modelMapper.map(employee, ResponseEmployeeDto.class)).collect(Collectors.toList());
@@ -92,14 +90,12 @@ public class employeeController {
 
 
     @PostMapping("/delete")
-
     public ResponseEntity<?> deleteEmployeeById(@RequestParam("id") long id) {
         employeeService.deleteEmployeeById(id);
         return ResponseEntity.ok("Delete success!");
     }
 
     @PostMapping("/deteleInDepartment")
-    
     public ResponseEntity<?> deleteInDepartment(@RequestParam("id") long id) {
         employeeService.deleteInDepartmnetById(id);
         return ResponseEntity.ok("Delete success!");
